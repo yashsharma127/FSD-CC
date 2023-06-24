@@ -42,6 +42,7 @@ const App = () => {
     setSelected(random)
 }
 
+
   const VoteKeeper = () => {
     setPoints(points.map((e,i) => (i === selected ? e + 1:e )))
   }
