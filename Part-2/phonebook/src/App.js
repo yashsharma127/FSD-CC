@@ -13,7 +13,7 @@ const Filter = ({filterPerson,handelFilterperson,filterPersons}) => {
     )
 }
 
-const PersonForm = ({newName,handlePerson,newNumber,handleNumber,persons,setPersons,setNewName,setNewNumber}) => {
+const PersonForm = ({setMessages,newName,handlePerson,newNumber,handleNumber,persons,setPersons,setNewName,setNewNumber}) => {
 
   const addPerson = (event) => {
     event.preventDefault()
@@ -32,10 +32,27 @@ const PersonForm = ({newName,handlePerson,newNumber,handleNumber,persons,setPers
             setPersons(
               persons.map(person => person.id !== updatedPerson.id ? person :updatedPerson)
             )
-            alert(newName + `'s number is updated`)
+            setMessages({
+              type:'success',
+              content: `${updatedPerson.name}'s number is changed ` 
+            })
+            setTimeout(() => {
+              setMessages({ type: null, content: null })
+            }, 5000)
+          })
+          .catch((error) => {
+            setMessages({
+              type: 'error',
+              content: `Information of ${newName} is removed from the server `
+            })
+            setTimeout(() => {
+              setMessages({ type: null, content: null })
+            }, 5000)
+            
+            })
             setNewName('')
             setNewNumber('')
-          })
+            
       }
     }
       
@@ -44,6 +61,13 @@ const PersonForm = ({newName,handlePerson,newNumber,handleNumber,persons,setPers
       .create(personObject)
       .then(returnedPerson => {
         setPersons(persons.concat(returnedPerson))
+        setMessages({
+          type:'success',
+          content: `${returnedPerson.name}'s is added ` 
+        })
+        setTimeout(() => {
+          setMessages({ type: null, content: null })
+        }, 5000)
         setNewName('')
         setNewNumber('')
       })
@@ -77,6 +101,14 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [showAll, setShowAll] = useState(true) 
   const [filterPerson , setFilterperson] = useState('')
+  const [messages, setMessages] = useState({ type: null, content: null })
+
+  const Notification = ({ message }) => {
+    if (message.type === null || message.content === null) {
+        return null;
+    }
+    return <div className={message.type}>{message.content}</div>;
+}
 
   useEffect(() => {
     personServices
@@ -113,7 +145,13 @@ const App = () => {
             )
           }) 
           .catch((error) => {
-            alert(`${deletingPerson.name} is already deleted`)
+            setMessages({
+              type: 'error',
+              content: `${deletingPerson.name} is already deleted`
+            })
+            setTimeout(() => {
+              setMessages({ type: null, content: null })
+            }, 5000)
             })
         }
 
@@ -131,8 +169,9 @@ const App = () => {
     <div>
        
       <h1>Phonebook</h1>
+
      <Filter filterPerson ={filterPerson} handelFilterperson={handelFilterperson} filterPersons={filterPersons}/>
-      
+     <Notification message={messages} />
       <h2>Add a new</h2>
       <PersonForm newName={newName} 
                   handlePerson={handlePerson} 
@@ -141,7 +180,8 @@ const App = () => {
                   persons={persons}
                   setPersons = {setPersons}
                   setNewName = {setNewName}
-                  setNewNumber = {setNewNumber}/>
+                  setNewNumber = {setNewNumber}
+                  setMessages={setMessages}/>
 
       <h2>Numbers</h2>
       <Persons personsToShow={personsToShow}
