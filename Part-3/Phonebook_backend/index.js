@@ -40,6 +40,39 @@ app.get('/api/persons/:id', (request, response) => {
 })
 
 
+app.post('/api/persons', (request, response) => {
+    const body  = request.body
+    if(!body.name || !body.number){
+        return response.status(400).json({
+            error: 'name or number is missing'
+        })
+    }
+
+    const person = {
+        name: body.name,
+        number: body.number,
+        id: Math.random()*1000
+    }
+
+    const uniqueCheck = persons.find(per =>per.name === person.name)    
+    if(uniqueCheck){
+        return response.status(400).json({
+            error: 'name must be unique'
+        })
+    }
+    persons = persons.concat(person)
+
+    response.json(person)
+})
+
+
+app.delete('/api/persons/:id', (request, response) => {
+    const id =Number(request.params.id)
+    persons =persons.filter(person => person.id !== id)
+
+    response.status(204).end()
+})
+
 app.get('/api/persons', (request, response) => {
     response.json(persons)
   })
