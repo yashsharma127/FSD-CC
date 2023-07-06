@@ -1,4 +1,6 @@
 const express = require('express')
+const morgan = require('morgan')
+
 const app = express()
 
 app.use(express.json())
@@ -26,7 +28,18 @@ let persons = [
     }
 ]
 
+morgan.token('req-body', (req) => {
+    if(req.method === 'POST') {
+        return JSON.stringify(req.body)
+    }
+    return '-'
+})
 
+const customFormat = ':method :url :status :response-time ms - :req-body';
+
+app.use(morgan(customFormat))
+
+app.use(express.json())
 
 app.get('/api/persons/:id', (request, response) => {
     const id = Number(request.params.id)
