@@ -54,11 +54,14 @@ app.use(morgan(customFormat))
 app.use(express.json())
 
 app.get('/info', (request, response) => {
-    
-    response.send(`
+    Person.find({})
+    .then(persons => {
+        response.send(`
     <p>Phonebook has info for ${persons.length} people</p>
     <p>${new Date()}</p>
-    `)
+    `);
+    })
+    .catch((error) => next(error));
 })
 
 
