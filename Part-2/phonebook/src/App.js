@@ -71,6 +71,13 @@ const PersonForm = ({setMessages,newName,handlePerson,newNumber,handleNumber,per
         setNewName('')
         setNewNumber('')
       })
+      .catch(error => {
+        console.log(error.response.data.error)
+        setMessages({
+          type: 'error',
+          content: error.response.data.error || 'an error occured...',
+      })
+      })
      
   }
 
