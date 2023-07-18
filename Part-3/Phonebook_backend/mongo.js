@@ -6,7 +6,7 @@ if (process.argv.length<3) {
   process.exit(1)
 }
 
-const [password, name, number] = process.argv.slice(2);
+const [password, name, number] = process.argv.slice(2)
 
 const url =
   `mongodb+srv://fullstack:${password}@cluster0.mcl0shi.mongodb.net/phoneBook?retryWrites=true&w=majority`
@@ -15,33 +15,33 @@ mongoose.set('strictQuery',false)
 
 
 const personSchema = new mongoose.Schema({
-    name: String,
-    number: String,
-  })
-  
+  name: String,
+  number: String,
+})
+
 const Person = mongoose.model('Person', personSchema)
 
 
 mongoose.connect(url).then((result) => {
-    console.log('connected')
-    if(name && number) {
-        const person =new Person({
-            name,
-            number,
-        })
-        return person.save().then(person => {
-            console.log(
-                `added ${person.name} number ${person.number} to phonebook`
-            )
-            mongoose.connection.close()
-        })
-    }
-    console.log('phonebook:')
-    Person.find({}).then(person => {
-        person.map(person => console.log(person.name, person.number))
-        mongoose.connection.close()
+  console.log('connected')
+  if(name && number) {
+    const person =new Person({
+      name,
+      number,
     })
+    return person.save().then(person => {
+      console.log(
+        `added ${person.name} number ${person.number} to phonebook`
+      )
+      mongoose.connection.close()
+    })
+  }
+  console.log('phonebook:')
+  Person.find({}).then(person => {
+    person.map(person => console.log(person.name, person.number))
+    mongoose.connection.close()
+  })
 })
-.catch(error => {
+  .catch(error => {
     console.log(error)
-})
+  })
