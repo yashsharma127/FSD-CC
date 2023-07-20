@@ -1,19 +1,26 @@
 import { useState,useEffect } from "react"
+import axios from 'axios'
+
+const COUNTRIES_IN_LOCALSTORAGE = 'countries';
 
 const App = () =>  {
 
-  const [country, setCountry] = useState(null)
+  const [countries, setCountries] = useState([])
 
   useEffect(() => {
-    if (country) {
-      console.log('fetching country details...')
-      axios
-        .get(`https://open.er-api.com/v6/latest/${currency}`)
-        .then(response => {
-          setRates(response.data.rates)
+    
+        console.log('Fetching from server');
+        axios
+          .get('https://restcountries.com/v3.1/all')
+            .then((response) => {
+              const fetchedCountries = response.data
+              console.log('Fetched countries:', fetchedCountries);
+              setCountries(fetchedCountries)
+              localStorage.setItem(COUNTRIES_IN_LOCALSTORAGE, JSON.stringify(fetchedCountries))
         })
-    }
-  }, [country])
+    
+}, [])
+   
 
   return (
     <div >
